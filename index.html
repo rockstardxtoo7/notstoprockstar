@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Rockstar Telugu — Ambient Music Player</title>
+    <meta name="description" content="Ambient music player website with looping video background and custom audio player UI." />
+    <meta name="theme-color" content="#0f071a" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Sora:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffc46b'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <!-- Full-Viewport Loop Video Background -->
+    <div class="bg" aria-hidden="true">
+      <video class="bg__video" autoplay muted loop playsinline preload="auto">
+        <source src="assets/bg.mp4" type="video/mp4" />
+      </video>
+      <div class="bg__scrim"></div>
+      <div class="bg__grain"></div>
+    </div>
+
+    <!-- Hidden YouTube IFrame Player for Background Audio -->
+    <div class="yt-host" aria-hidden="true">
+      <div id="yt-player"></div>
+    </div>
+
+    <!-- Top Bar HUD -->
+    <header class="topbar">
+      <div class="hud hud--left">
+        <span class="hud__value" id="clock">--:-- --</span>
+        <span class="hud__sub" id="kmCount">0 km driven</span>
+      </div>
+
+      <!-- Top Floating Control Pill -->
+      <div class="top-pill">
+        <button id="shuffle" type="button" class="btn btn--top is-on" aria-label="Toggle Shuffle" aria-pressed="true" title="Shuffle">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+            <path d="M17 3l4 4-4 4V8h-2.2l-2.3 3.1 2.3 3.1H17V11l4 4-4 4v-3h-3.2l-2.6-3.5L8.6 15H3v-2h4.6l2.6-3.5L12.8 6H17V3zM3 9h3.4l1.5 2H3V9z"/>
+          </svg>
+        </button>
+        <button id="listBtn" type="button" class="btn btn--top" aria-label="Toggle Playlist" aria-expanded="true" aria-controls="list" title="Playlist">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true">
+            <path d="M3 6h13v2H3zm0 5h13v2H3zm0 5h9v2H3zm15-6.5l4 3-4 3z"/>
+          </svg>
+        </button>
+        <button id="shareBtn" type="button" class="btn btn--top" aria-label="Share" title="Share">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+            <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Instagram Link (Replaces made by rockstar) -->
+      <a href="https://www.instagram.com/ogrockstar.exe?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" class="ig-link" title="Instagram @ogrockstar.exe" aria-label="Instagram Profile">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+        </svg>
+      </a>
+    </header>
+
+    <main>
+      <h1 class="sr-only">Rockstar Telugu — Ambient Music Player</h1>
+
+      <!-- Center Translucent Playlist Card (Matching Reference UI) -->
+      <section class="list is-open" id="list" aria-label="Playlist">
+        <div class="list__scroll">
+          <ol id="listItems">
+            <!-- Populated dynamically by app.js -->
+          </ol>
+        </div>
+      </section>
+
+      <!-- Bottom Glassmorphic Player Dock (Matching Reference UI) -->
+      <section class="dock" id="player" aria-label="Audio Player Controls">
+        <!-- Circular Album Art Cover -->
+        <div class="dock__disc" id="disc" aria-hidden="true">
+          <img id="cover" class="dock__art" alt="" src="" />
+        </div>
+
+        <div class="dock__body">
+          <div class="dock__meta">
+            <h2 class="dock__title" id="title">Loading tracks...</h2>
+            <p class="dock__artist" id="artist">Rockstar Telugu</p>
+          </div>
+
+          <!-- Sleek Horizon Seek Bar & Time Display -->
+          <div class="horizon" id="seek" role="slider" tabindex="0" aria-label="Track playback position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="horizon__rail">
+              <div class="horizon__fill" id="seekFill"></div>
+              <span class="horizon__sun" id="seekKnob" aria-hidden="true"></span>
+            </div>
+            <div class="horizon__time">
+              <span id="tCur">0:00</span>
+              <span class="horizon__sep">/</span>
+              <span id="tDur">0:00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controls: Prev, Solid White Play Circle, Next -->
+        <div class="controls">
+          <button id="prev" type="button" class="btn btn--control" aria-label="Previous track" title="Previous Track">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+              <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
+            </svg>
+          </button>
+          <button id="play" type="button" class="btn btn--play" aria-label="Play Track" title="Play / Pause" disabled>
+            <svg class="i-play" viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+            <svg class="i-pause" viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true">
+              <path d="M6 5h4v14H6zm8 0h4v14h-4z"/>
+            </svg>
+          </button>
+          <button id="next" type="button" class="btn btn--control" aria-label="Next track" title="Next Track">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+              <path d="M16 6h2v12h-2zm-2 6L5.5 6v12z"/>
+            </svg>
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <noscript>
+      <p style="color:#fbe8d8; text-align:center; padding:2rem;">JavaScript is required to run the audio player.</p>
+    </noscript>
+
+    <script src="app.js"></script>
+  </body>
+</html>
